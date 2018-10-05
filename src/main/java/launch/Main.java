@@ -40,35 +40,18 @@ public class Main extends JFrame implements Runnable{
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setSize(500,500);
 		setLocationRelativeTo(null);
-		setUndecorated(true);
-		
+		setUndecorated(true);	
 		setVisible(true);
-		SQL.Connect("timeclock", "127.0.0.1", 5432, "postgres", "arcon194");
-//		Thread t = new Thread(this);
-//		t.start();
-		InitalizeDatabase.InitDatabase("postgres", "arcon194");
-		
-//		ResultList simple = new ResultList(SQLEngine.executeDBQuery("INSERT INTO \"table\" (test_text) VALUES (\'its Java\')"));
-//		
-//		
-//		System.out.println(simple.getColumnNames());
-//		for(HashMap<String, Object> row: simple)
-//		{
-//			Iterator it = row.keySet().iterator();
-//			while( it.hasNext())
-//			{
-//				System.out.printf("%15S",row.get(it.next()));
-//			}
-//			System.out.println();
-//		}
-//		
+		Thread t = new Thread(this);
+		t.start();	
 	}
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		BufferedImage i;
 		try {
-			File imageFile = new File("images/timeclock.jpg");
+			File imageFile = new File("src/main/java/images/timeclock.jpg");
+			System.out.println(imageFile.getAbsolutePath());
 			i = ImageIO.read(imageFile);
 			g.drawImage(i.getScaledInstance(500, 500, BufferedImage.SCALE_AREA_AVERAGING),0, 0, null);
 		} catch (IOException e) {
@@ -84,7 +67,20 @@ public class Main extends JFrame implements Runnable{
 	{
 		//String to where servers are saved
 		String savedDataFile=System.getenv("APPDATA")+"\\CTTimeClock\\servers.cfg";
-		
+		File f = new File(savedDataFile);
+		File fd = new File(savedDataFile.substring(0,savedDataFile.lastIndexOf('\\')));
+		if(!f.exists()) // if the cfg file doesn't exists
+		{
+			try
+			{
+				fd.mkdirs();
+				f.createNewFile();
+			} catch (IOException e)
+			{
+				System.out.println("Failed To Create the file for congiguration");
+				e.printStackTrace();
+			}
+		}
 		//Create FileStream and Empty the Arraylist of loaded servers
 		FileInputStream fis;
 		ObjectInputStream o = null;
@@ -105,6 +101,8 @@ public class Main extends JFrame implements Runnable{
 				o.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
+			} catch (NullPointerException e2) {
+				
 			}
 		}
 		catch (IOException e) {

@@ -488,6 +488,8 @@ public class LoginMenu extends JFrame implements BaseWindow
 			} catch (IOException e) {
 				System.err.println("Error closing object or file stream");
 				e.printStackTrace();
+			} catch (NullPointerException e) {
+				
 			}
 		}
 		catch (IOException e) {

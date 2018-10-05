@@ -207,6 +207,7 @@ public class InitalizeDatabase
 		
 		// Function section		
 		
+		//TimePunch
 		SQL.executeQuery("CREATE OR REPLACE FUNCTION public.timepunch(\r\n" + 
 				"    pid text,\r\n" + 
 				"    ppassword text)\r\n" + 
@@ -238,6 +239,88 @@ public class InitalizeDatabase
 				"  COST 100;\r\n" + 
 				"ALTER FUNCTION public.timepunch(text, text)\r\n" + 
 				"  OWNER TO postgres;");
+		//TimePunchAdmin 
+		SQL.executeQuery("CREATE OR REPLACE FUNCTION public.timepunch(\n" + 
+				"    padmin_id integer,\n" + 
+				"    pempid integer)\n" + 
+				"  RETURNS integer AS\n" + 
+				"$BODY$\n" + 
+				"DECLARE \n" + 
+				"	empid INTEGER;\n" + 
+				"	padmintest INTEGER;\n" + 
+				"	clockstatus BOOLEAN;\n" + 
+				"BEGIN\n" + 
+				"\n" + 
+				"SELECT employee_id INTO empid FROM employee\n" + 
+				"WHERE employee_id = pempid;\n" + 
+				"\n" + 
+				"IF empid IS NULL \n" + 
+				"THEN\n" + 
+				"  RETURN -1;-- THE Employee Doesnt Exsist\n" + 
+				"END IF;\n" + 
+				"\n" + 
+				"SELECT admin_id INTO padmintest\n" + 
+				"FROM admin \n" + 
+				"WHERE admin_id = padmin_id;\n" + 
+				"\n" + 
+				"IF padmintest IS NULL \n" + 
+				"THEN\n" + 
+				"  RETURN -1;-- The manager id doesnt exists\n" + 
+				"END IF;\n" + 
+				"\n" + 
+				"SELECT employee_clockstatus \n" + 
+				"INTO clockstatus \n" + 
+				"FROM employee \n" + 
+				"WHERE employee_id = empid;\n" + 
+				"INSERT INTO tp (timepunch_employee_id,timepunch_time,timepunch_type)\n" + 
+				"VALUES (empid,LOCALTIMESTAMP,NOT clockstatus);\n" + 
+				"UPDATE employee \n" + 
+				"SET employee_lastpunch = LOCALTIMESTAMP , employee_clockstatus = NOT clockstatus\n" + 
+				"WHERE employee_id = empid;\n" + 
+				"RETURN 0;\n" + 
+				"END\n" + 
+				"$BODY$\n" + 
+				"  LANGUAGE plpgsql VOLATILE\n" + 
+				"  COST 100;\n" + 
+				"ALTER FUNCTION public.timepunch(integer, integer)\n" + 
+				"  OWNER TO postgres;\n" + 
+				"");
+		
+		//TimePunch 
+		SQL.executeQuery("-- Function: timepunch(integer, text)\n" + 
+				"\n" + 
+				"-- DROP FUNCTION timepunch(integer, text);\n" + 
+				"\n" + 
+				"CREATE OR REPLACE FUNCTION timepunch(pid integer, ppassword text)\n" + 
+				"  RETURNS integer AS\n" + 
+				"$BODY$\n" + 
+				"DECLARE \n" + 
+				"	empid INTEGER;\n" + 
+				"	clockstatus BOOLEAN;\n" + 
+				"BEGIN\n" + 
+				"SELECT employee_id INTO empid FROM employee\n" + 
+				"WHERE employee_id = pid AND employee_password=ppassword;\n" + 
+				"IF empid IS NULL \n" + 
+				"THEN\n" + 
+				"  RETURN -1;\n" + 
+				"END IF;\n" + 
+				"SELECT employee_clockstatus \n" + 
+				"INTO clockstatus \n" + 
+				"FROM employee \n" + 
+				"WHERE employee_id = empid;\n" + 
+				"INSERT INTO tp (timepunch_employee_id,timepunch_time,timepunch_type)\n" + 
+				"VALUES (empid,LOCALTIMESTAMP,NOT clockstatus);\n" + 
+				"UPDATE employee \n" + 
+				"SET employee_lastpunch = LOCALTIMESTAMP , employee_clockstatus = NOT clockstatus\n" + 
+				"WHERE employee_id = empid;\n" + 
+				"RETURN 0;\n" + 
+				"END\n" + 
+				"$BODY$\n" + 
+				"  LANGUAGE plpgsql VOLATILE\n" + 
+				"  COST 100;\n" + 
+				"ALTER FUNCTION timepunch(integer, text)\n" + 
+				"  OWNER TO postgres;\n" + 
+				"");
 		
 		System.out.println("Finished");
 	}

@@ -99,6 +99,10 @@ public class ListEmployeesMenu extends JPanel {
 				return columnEditables[column];
 			}
 		});
+		
+		if(true) //Code organization. Remove on release
+		{
+		
 		scrollPane.setViewportView(listTable);
 		
 		JPanel infoPanel = new JPanel();
@@ -300,6 +304,8 @@ public class ListEmployeesMenu extends JPanel {
 		fl_panel.setAlignOnBaseline(true);
 		panel.setLayout(fl_panel);
 		
+		
+		
 		JButton cancelEdit = new JButton("Cancel");
 		panel.add(cancelEdit);
 		
@@ -333,6 +339,7 @@ public class ListEmployeesMenu extends JPanel {
 			}
 		});
 		
+		}
 	}
 
 	protected int sSaveClicked() {
