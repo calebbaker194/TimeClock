@@ -33,8 +33,6 @@ public class InitalizeDatabase
 		String tptypeDrop = "DROP TABLE tptype CASCADE";
 		String wgDrop = "DROP TABLE wg CASCADE";
 		String wgmemberDrop = "DROP TABLE wgmember CASCADE";
-		String wgschedDrop = "DROP TABLE wgsched CASCADE";
-		String wgsched_itemDrop = "DROP TABLE wgsched_item CASCADE";
 		String verify_drop = "DROP TABLE verify CASCADE";
 		
 		//Drop all of the tables in case I had a bad init.
@@ -45,8 +43,6 @@ public class InitalizeDatabase
 		SQL.executeQuery(tptypeDrop);
 		SQL.executeQuery(wgDrop);
 		SQL.executeQuery(wgmemberDrop);
-		SQL.executeQuery(wgschedDrop);
-		SQL.executeQuery(wgsched_itemDrop);
 		SQL.executeQuery(verify_drop);
 		
 		// Schema section? --Depends If I figure out how well to do it, or to put it in the next iteration;
@@ -108,31 +104,7 @@ public class InitalizeDatabase
 				") WITH (\r\n" + 
 				"  OIDS=FALSE\r\n" + 
 				");\r\n";
-		tablecount[count++]=print(SQL.executeQuery(wgmember));
-		
-		String wgschedTable=
-				"CREATE TABLE \"wgsched\" (\r\n" + 
-				"	\"wgsched_id\" serial NOT NULL,\r\n" + 
-				"	\"wgsched_wg_id\" integer,\r\n" + 
-				"	CONSTRAINT wgsched_pk PRIMARY KEY (\"wgsched_id\")\r\n" + 
-				") WITH (\r\n" + 
-				"  OIDS=FALSE\r\n" + 
-				");\r\n";
-		tablecount[count++]=print(SQL.executeQuery(wgschedTable));
-		
-		String wgsched_item=
-				"CREATE TABLE \"wgsched_item\" (\r\n" + 
-				"	\"wgscheditem_id\" serial NOT NULL,\r\n" + 
-				"	\"wgscheditem_wgsched_id\" integer NOT NULL DEFAULT '0',\r\n" + 
-				"	\"wgscheditem_start\" timestamp  NOT NULL,\r\n" + 
-				"	\"wgscheditem_end\" timestamp  NOT NULL,\r\n" + 
-				"	\"wgscheditem_lunch\" integer NOT NULL DEFAULT '30',\r\n" + 
-				"	CONSTRAINT wgsched_item_pk PRIMARY KEY (\"wgscheditem_id\")\r\n" + 
-				") WITH (\r\n" + 
-				"  OIDS=FALSE\r\n" + 
-				");\r\n";
-		tablecount[count++]=print(SQL.executeQuery(wgsched_item));
-		
+		tablecount[count++]=print(SQL.executeQuery(wgmember));	
 		
 		String svTable=
 				"CREATE TABLE \"sv\" (\r\n" + 
@@ -165,8 +137,6 @@ public class InitalizeDatabase
 				"ALTER TABLE \"tp\" ADD CONSTRAINT \"tp_fk0\" FOREIGN KEY (\"timepunch_employee_id\") REFERENCES \"employee\"(\"employee_id\");\r\n" + 
 				"ALTER TABLE \"wgmember\" ADD CONSTRAINT \"wgmember_fk0\" FOREIGN KEY (\"workgroupmember_workgroup_id\") REFERENCES \"wg\"(\"workgroup_id\");\r\n" + 
 				"ALTER TABLE \"wgmember\" ADD CONSTRAINT \"wgmember_fk1\" FOREIGN KEY (\"workgroupmember_employee_id\") REFERENCES \"employee\"(\"employee_id\");\r\n" + 
-				"ALTER TABLE \"wgsched\" ADD CONSTRAINT \"wgsched_fk0\" FOREIGN KEY (\"wgsched_wg_id\") REFERENCES \"wg\"(\"workgroup_id\");\r\n" + 
-				"ALTER TABLE \"wgsched_item\" ADD CONSTRAINT \"wgsched_item_fk0\" FOREIGN KEY (\"wgscheditem_wgsched_id\") REFERENCES \"wgsched\"(\"wgsched_id\");\r\n" + 
 				"ALTER TABLE \"sv\" ADD CONSTRAINT \"sv_fk0\" FOREIGN KEY (\"sv_employee_id\") REFERENCES \"employee\"(\"employee_id\");\r\n";
 		SQL.executeQuery(foreignKey);
 		//Special table to check if the db is already here on the db
@@ -176,9 +146,7 @@ public class InitalizeDatabase
 				"	\"table_tp\" TEXT DEFAULT '-1',\r\n" +
 				"	\"table_wg\" TEXT DEFAULT '-1',\r\n" + 
 				"	\"table_wgmember\" TEXT DEFAULT '-1',\r\n" + 
-				"	\"table_wgsched_item\" TEXT DEFAULT '-1',\r\n" + 
 				"	\"table_sv\" TEXT DEFAULT '-1',\r\n" + 
-				"	\"table_wgsched\" TEXT DEFAULT '-1',\r\n" + 
 				"	\"table_admin\" TEXT DEFAULT '-1',\r\n"+
 				"	CONSTRAINT verify_id PRIMARY KEY (\"verify_id\")\r\n" + 
 				") WITH (\r\n" + 

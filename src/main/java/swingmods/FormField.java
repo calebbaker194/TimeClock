@@ -20,12 +20,16 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 	
 	public FormField() {
 		super();
+		addFocusListener(this);
+		getDocument().addDocumentListener(this);
 	}
 	
 	public FormField(String text) 
 	{
 		super();
 		super.setText(text);
+		addFocusListener(this);
+		getDocument().addDocumentListener(this);
 	}
 	
 	@Override
@@ -48,16 +52,16 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 	      }
 	}
 	
-	  @Override
-	  public String getText() 
-	  {
-	    return isHinting ? "" : super.getText();
-	  }
+	@Override
+	public String getText() 
+	{
+		return isHinting ? "" : super.getText();
+	}
 	
-	  public void clearEdit()
-	  {
-		  edit = false;
-	  }
+	public void clearEdit()
+	{
+		edit = false;
+	}
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {
@@ -90,6 +94,12 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 	public void setHint(String h)
 	{
 		hint = h;
+	    if(this.getText().isEmpty()) 
+	    {
+	        super.setText(hint);
+	        isHinting = true;
+	        setForeground(Color.gray);
+	    }
 	}
 	
 	public String getHint()
@@ -97,19 +107,6 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 		return hint;
 	}
 	
-	/*
-	 * @param forms: used as a list of forms to clean up the code
-	 * 
-	 * Makes
-	 * formA.resetEdit()
-	 * formB.resetEdit()
-	 * formC.resetEdit()
-	 * formD.resetEdit()
-	 * 
-	 * Into 
-	 * 
-	 * FormField.resetAllEdits(formA,formB,formC,formD)
-	 */
 	public static void resetAllEdits(FormField... forms)
 	{
 		for(FormField f: forms)
@@ -120,6 +117,16 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 	public boolean isEmpty()
 	{
 		return !(getText().length() > 0 && !(getForeground().equals(Color.GRAY)));
+	}
+
+	public static boolean hasEdits(FormField... forms)
+	{
+		boolean hasedi = false;
+		for(FormField f: forms)
+		{
+			hasedi = hasedi || f.hasEdit();
+		}
+		return hasedi;
 	}
 	
 }

@@ -1,12 +1,9 @@
 package launch;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-
-import database.InitalizeDatabase;
 import screens.HomeMenu;
 import screens.LoginMenu;
 import sqlengine.PostGresServer;
-import sqlengine.ResultList;
 import sqlengine.SQL;
 import java.awt.Graphics;
 import java.awt.event.WindowEvent;
@@ -17,8 +14,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class Main extends JFrame implements Runnable{
 	
@@ -61,7 +56,6 @@ public class Main extends JFrame implements Runnable{
 		
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void run() 
 	{
@@ -115,18 +109,18 @@ public class Main extends JFrame implements Runnable{
 		{
 			if(testLogin(prevousServers.get(0)))
 			{
-				HomeMenu hm = new HomeMenu(); // No need to login. SQLEngine.SQLConnection saves everything.
+				new HomeMenu(); // No need to login. SQLEngine.SQLConnection saves everything.
 				dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 				return;
 			}
 		}
-		LoginMenu lm = new LoginMenu();
+		new LoginMenu();
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
 
-	private boolean testLogin(PostGresServer postGresServer) 
+	private boolean testLogin(PostGresServer pgdb) 
 	{	
-		return (SQL.Connect("postgres", "localhost", 5432, "postgres", "arcon194")).equals("0");
+		return (SQL.Connect(pgdb.getDb(), pgdb.getHost(), pgdb.getPort(), pgdb.getUsername(), pgdb.getPassword())).equals("0");
 	}
 
 }

@@ -5,7 +5,6 @@ import sqlengine.ResultList;
 import sqlengine.SQL;
 import swingmods.BaseWindow;
 import swingmods.FormField;
-import tcregex.TCRegex;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import javax.swing.JTable;
@@ -21,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Vector;
@@ -30,7 +28,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
-import database.InitalizeDatabase;
 import manager.Manager;
 
 import java.awt.Frame;
@@ -309,6 +306,7 @@ public class HomeMenu extends JFrame implements BaseWindow{
 
 	protected void loadScreens()
 	{		
+		System.out.println("Loaded Screens");
 //		ListWorkGroupMenu lw = new ListWorkGroupMenu();
 //		getContentPane().add(lw, "EditWorkGroup");
 	    
@@ -338,6 +336,7 @@ public class HomeMenu extends JFrame implements BaseWindow{
 	}
 
 	protected void editUsers() {
+		System.out.println("Switching to edit users screen");
 		CardLayout cl = (CardLayout)(getContentPane().getLayout());
 	    cl.show(getContentPane() , "EditEmployee");
 	}
