@@ -1,5 +1,6 @@
 package database;
 
+
 import java.util.HashMap;
 import java.util.List;
 import javax.management.InstanceAlreadyExistsException;
@@ -11,16 +12,6 @@ public class InitalizeDatabase
 	private static boolean init=false;
 	public static void  InitDatabase(String pusername, String ppassword)
 	{
-		try
-		{
-			ResultList rl = new ResultList(SQL.executeQuery("SELECT * FROM verify LIMIT 1"));
-			init = rl.first();
-		}
-		catch(Exception e)
-		{
-			System.out.println("Database not initalized");
-		}
-		
 		init = true;
 		// Update this when adding a table
 		int[] tablecount = new int[8];
@@ -64,6 +55,7 @@ public class InitalizeDatabase
 				"	\"employee_supervisor_id\" integer,\r\n" + 
 				"   \"employee_clockstatus\" BOOLEAN DEFAULT 'false',\r\n"+      // True = IN : False = OUT
 				"   \"employee_lastpunch\" timestamp, \r\n"+
+				"   \"employee_isactive\" BOOLEAN, \r\n"+
 				"	CONSTRAINT employee_pk PRIMARY KEY (\"employee_id\")\r\n" + 
 				") WITH (\r\n" + 
 				"  OIDS=FALSE\r\n" + 
@@ -304,5 +296,21 @@ public class InitalizeDatabase
 //		}
 //		return list;
 		return 1;
+	}
+	public static void createDatabase(String pusername, String ppassword, String host, int port)
+	{
+		SQL.Connect("postgres", host, port, pusername, ppassword);
+		
+		SQL.executeQuery("CREATE DATABASE \"cttimeclock\"\n" + 
+				"  WITH OWNER = " +pusername+"\n" + 
+				"       ENCODING = 'UTF8'\n" + 
+				"       TABLESPACE = pg_default\n" + 
+				"       LC_COLLATE = 'English_United States.1252'\n" + 
+				"       LC_CTYPE = 'English_United States.1252'\n" + 
+				"       CONNECTION LIMIT = -1;\n" + 
+				"");
+		SQL.Connect("cttimeclock", host, port, pusername, ppassword);
+		InitDatabase(pusername, ppassword);;
+		
 	}
 }

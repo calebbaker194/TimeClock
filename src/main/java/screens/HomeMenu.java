@@ -38,9 +38,7 @@ import javax.swing.JScrollPane;
 @SuppressWarnings("serial")
 public class HomeMenu extends JFrame implements BaseWindow{
 
-	private JPanel infoPanel;
-	private FormField loginName;
-	private FormField passwordField;
+
 	private LoginMenu loginMenu;
 	private int lastSelection = -1;
 	private JTable listTable;
@@ -62,8 +60,7 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
 		getContentPane().add(splitPane,"Home Menu");
-		infoPanel = new JPanel();
-		infoPanel.setName("infoPanel");		splitPane.setRightComponent(infoPanel);
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		//For List|Info Screens
@@ -71,50 +68,8 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		setSize(650, 500);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 
-		GridBagLayout gbl_empInfoPanel = new GridBagLayout();
-		gbl_empInfoPanel.columnWidths = new int[] {0, 0};
-		gbl_empInfoPanel.rowHeights = new int[]{0, 0, 0};
-		gbl_empInfoPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_empInfoPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		infoPanel.setLayout(gbl_empInfoPanel);
-		
-		JButton btnTimeCard = new JButton("Time Card");
-		GridBagConstraints gbc_btnTimeCard = new GridBagConstraints();
-		gbc_btnTimeCard.anchor = GridBagConstraints.NORTH;
-		gbc_btnTimeCard.insets = new Insets(0, 0, 5, 0);
-		gbc_btnTimeCard.gridx = 0;
-		gbc_btnTimeCard.gridy = 0;
-		infoPanel.add(btnTimeCard, gbc_btnTimeCard);
-		
-		Box verticalBox = Box.createVerticalBox();
-		GridBagConstraints gbc_verticalBox = new GridBagConstraints();
-		gbc_verticalBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_verticalBox.anchor = GridBagConstraints.SOUTH;
-		gbc_verticalBox.gridx = 0;
-		gbc_verticalBox.gridy = 1;
-		infoPanel.add(verticalBox, gbc_verticalBox);
-		
-		loginName = new FormField();
-		loginName.setEditable(false);
-		verticalBox.add(loginName);
-		loginName.setColumns(1);
-		
-		Component verticalStrut = Box.createVerticalStrut(20);
-		verticalBox.add(verticalStrut);
-		
-		Box horizontalBox = Box.createHorizontalBox();
-		verticalBox.add(horizontalBox);
-		
-		JLabel lblPassword = new JLabel("Password:");
-		horizontalBox.add(lblPassword);
-		
-		passwordField = new FormField();
-		horizontalBox.add(passwordField);
-		passwordField.setColumns(10);
-		
-		JButton punchBtn = new JButton("In/Out/Lunch");
-		verticalBox.add(punchBtn);
 		listTable = new JTable();
 		
 		listTable.setModel(new DefaultTableModel(
@@ -127,6 +82,14 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		
 		JScrollPane scrollPane = new JScrollPane(listTable);
 		splitPane.setLeftComponent(scrollPane);
+		
+		JButton btnNewButton = new JButton("Home");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
+		menuBar.add(btnNewButton);
 		
 		JMenu mnAdmin = new JMenu("Admin");
 		menuBar.add(mnAdmin);
@@ -220,22 +183,7 @@ public class HomeMenu extends JFrame implements BaseWindow{
 				if(listTable.getSelectedRow() != -1)
 				{
 					e.consume();
-					clickList();
 				}	
-			}
-		});
-		
-		btnTimeCard.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				displayTimeCard();
-			}
-		});
-		
-		punchBtn.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				timePunch();
 			}
 		});
 		
@@ -286,22 +234,6 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		loadScreens();
 		editUsers();
 		
-	}
-
-	protected void clickList() 
-	{
-		if(listTable.getSelectedRow() == lastSelection)
-		{
-			listTable.clearSelection();
-			setInfoPanelEnabled(false);
-		}
-		else
-		{
-			loginName.setText((String) employeeList.get(listTable.getSelectedRow()).get("name"));
-			passwordField.requestFocus();
-			setInfoPanelEnabled(true);
-		}
-		lastSelection = listTable.getSelectedRow() != -1 ? listTable.getSelectedRow() : lastSelection;
 	}
 
 	protected void loadScreens()
@@ -391,52 +323,12 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		
 	}
 
-	protected void timePunch() 
-	{
-		if(listTable.getSelectedRow()>-1)
-		{
-			boolean success = false;
-			if(Manager.adminId != null)
-			{
-				success =(Manager.timePunch(employeeList.get(listTable.getSelectedRow()).get("id")+"",passwordField.getText()));
-			}
-			else
-			{
-				success =(Manager.timePunchAdmin(Manager.getAdminId(),employeeList.get(listTable.getSelectedRow()).get("id")+""));
-			}
-			
-			if(success)
-			{
-				queryStatus();
-				setInfoPanelEnabled(false);
-				listTable.clearSelection();
-				passwordField.setText("");
-				loginName.setText("");
-				// TODO: GREEN ANIMATION
-			}
-			else
-			{
-				passwordField.setText("");
-				// TODO: RED ANIMATION:
-			}
-		}	
-	}
-
-	private void setInfoPanelEnabled(boolean b) 
-	{
-		infoPanel.setEnabled(b);
-		for(Component c : infoPanel.getComponents())
-		{
-			c.setEnabled(b);
-		}
-	}
-
 	protected void displayTimeCard()
 	{
 		JFrame p = new JFrame();
 		p.setAlwaysOnTop(true);
 		p.getContentPane().setLayout(new BorderLayout());
-		p.add(new EmployeeTimeCard(employeeList.get(listTable.getSelectedRow()).get("id")+""));
+		//p.getContentPane().add(new EmployeeTimeCard(employeeList.get(listTable.getSelectedRow()).get("id")+""));
 		p.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		p.setVisible(true);
 	}

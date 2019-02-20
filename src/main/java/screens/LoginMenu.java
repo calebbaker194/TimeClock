@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
@@ -28,6 +29,8 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import database.InitalizeDatabase;
 import sqlengine.PostGresServer;
 import sqlengine.SQL;
 import swingmods.BaseWindow;
@@ -281,10 +284,9 @@ public class LoginMenu extends JFrame implements BaseWindow
 	{
 		String reply="";
 		if(   ipAddress.getText().matches(TCRegex.IP_ADDRESS+"|"+TCRegex.FQND)
-		   && TCRegex.isPort(port.getText())
-		   && dbpassword.getText().matches(TCRegex.PASSWORD))
+		   && TCRegex.isPort(port.getText()))
+		   //&& dbpassword.getText().matches(TCRegex.PASSWORD))
 		{
-			
 			reply = SQL.Connect(database.getText(),
 								ipAddress.getText(),
 								Integer.parseInt(port.getText()),
@@ -322,10 +324,50 @@ public class LoginMenu extends JFrame implements BaseWindow
 			reply = "Host Invalid: Must be an IP address or FQDN\n"+reply;
 		if(!TCRegex.isPort(port.getText()))
 			reply = "Port Invalid: Port must Be a number between 1 and 65535\n"+reply;
-		if(!dbpassword.getText().matches(TCRegex.PASSWORD))
-			reply = "Password Invalid: Must Be at least 6 characters a-z A-Z 0-9 or !@#$%^&*()_+=\n"+reply;
+		//if(!dbpassword.getText().matches(TCRegex.PASSWORD))
+		//	reply = "Password Invalid: Must Be at least 6 characters a-z A-Z 0-9 or !@#$%^&*()_+=\n"+reply;
 		//Show Error Message And Reason Connection Failed
+		if(reply.startsWith("Running"))
+		{
+			int confirm = JOptionPane.showConfirmDialog(this, "The server is running but the databse has not been created. Create Now?");
+			if(confirm == JOptionPane.YES_OPTION)
+			{
+				try
+				{
+					InitalizeDatabase.createDatabase(dbusername.getText(),dbpassword.getText(),ipAddress.getText(), Integer.parseInt(port.getText()));
+					// If We used a row that was not the first
+					if(storeddbTable.getSelectedRow()>0)
+					{
+						// Move it to be the firest row for the auto logon next time
+						PostGresServer pgst = prevousServers.get(0);
+						prevousServers.add(0, prevousServers.remove(storeddbTable.getSelectedRow()));
+						prevousServers.add(prevousServers.size()-1, pgst);
+					}
+					else if(storeddbTable.getSelectedRow()==-1) // If we didnt use the saved data table at all
+					{
+						// Add our data to the array
+						prevousServers.add(0,new PostGresServer(  ipAddress.getText(),
+																database.getText(),
+																Integer.parseInt(port.getText()),
+																dbusername.getText(),
+																dbpassword.getText(),
+																dbnickname.getText()));
+					}
+					//Save adjustments so that next time we log on it will be where we left it
+					saveServers();
+					HomeMenu hm = new HomeMenu(this);
+					this.setVisible(false);
+					return;
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(this, e.getMessage(),"Error Occured When Setting Up Database. Please Try Again Or contact customer support at 903-946-3351", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
 		JOptionPane.showMessageDialog(this, reply,"Login Failed", JOptionPane.ERROR_MESSAGE);
+		
 		return;
 	}
 
@@ -492,12 +534,17 @@ public class LoginMenu extends JFrame implements BaseWindow
 				
 			}
 		}
+		catch (StreamCorruptedException e) {
+			new File(savedDataFile).delete();
+		}
 		catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		}
+		catch (ClassNotFoundException e) {
 			System.err.println("Object reader does not work Critical Failure");
 			e.printStackTrace();
 		}
+
 		
 	}
 

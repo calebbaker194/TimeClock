@@ -45,7 +45,7 @@ public class Main extends JFrame implements Runnable{
 		super.paint(g);
 		BufferedImage i;
 		try {
-			File imageFile = new File("src/main/java/images/timeclock.jpg");
+			File imageFile = new File("data/images/timeclock.jpg");
 			System.out.println(imageFile.getAbsolutePath());
 			i = ImageIO.read(imageFile);
 			g.drawImage(i.getScaledInstance(500, 500, BufferedImage.SCALE_AREA_AVERAGING),0, 0, null);
@@ -120,7 +120,15 @@ public class Main extends JFrame implements Runnable{
 
 	private boolean testLogin(PostGresServer pgdb) 
 	{	
-		return (SQL.Connect(pgdb.getDb(), pgdb.getHost(), pgdb.getPort(), pgdb.getUsername(), pgdb.getPassword())).equals("0");
+		try
+		{
+			return (SQL.Connect(pgdb.getDb(), pgdb.getHost(), pgdb.getPort(), pgdb.getUsername(), pgdb.getPassword())).equals("0");
+		}
+		catch(Exception e)
+		{
+			
+		}
+		return false;
 	}
 
 }

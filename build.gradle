@@ -37,5 +37,11 @@ dependencies {
     compile group: "com.sparkjava", name: "spark-template-velocity", version: "2.7.1"
     // This is the logger used by spark
     compile group: "org.slf4j", name: "slf4j-simple", version: "1.7.25"
+    
+	// https://mvnrepository.com/artifact/com.toedter/jcalendar
+	compile group: 'com.toedter', name: 'jcalendar', version: '1.4'
+
+    
+    
 }
 

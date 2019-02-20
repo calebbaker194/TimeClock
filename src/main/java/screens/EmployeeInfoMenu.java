@@ -7,6 +7,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.awt.Font;
 import java.awt.Color;
@@ -15,12 +16,19 @@ import javax.swing.SwingConstants;
 import sqlengine.ResultList;
 import sqlengine.SQL;
 import sreeninterface.EmployeeBrowser;
+import sreeninterface.ListInfoMod;
+
 import javax.swing.JComboBox;
 import java.awt.FlowLayout;
+
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import java.awt.Component;
+import javax.swing.Box;
+import java.awt.Dimension;
 
-public class EmployeeInfoMenu extends JPanel {
+public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 	
 	/**
 	 * 
@@ -38,15 +46,22 @@ public class EmployeeInfoMenu extends JPanel {
 	private int employeeId = -1;
 	private boolean createNew = false;
 	private boolean editMode = false;
-	
 	private JButton btnAdd;
+	private JButton btnSave;
+	private JButton btnCancel;
+	private JPanel formFields;
 	
 	public EmployeeInfoMenu(EmployeeBrowser sibling) {
+		BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
+		setLayout(boxLayout);
 		
 		setSibling(sibling);
+		formFields = new JPanel();
+		formFields.setMaximumSize(new Dimension(300, 500));
+		formFields.setBackground(Color.BLUE);
 		
 		GridBagLayout gbl_infoPanel = new GridBagLayout();
-		setLayout(gbl_infoPanel);
+		formFields.setLayout(gbl_infoPanel);
 		
 		JLabel fNameErr = new JLabel("First Name Required");
 		fNameErr.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -57,7 +72,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_fNameErr.insets = new Insets(0, 0, 5, 0);
 		gbc_fNameErr.gridx = 1;
 		gbc_fNameErr.gridy = 0;
-		add(fNameErr, gbc_fNameErr);
+		formFields.add(fNameErr, gbc_fNameErr);
 		
 		JLabel lblFirstName = new JLabel("First Name:");
 		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
@@ -65,7 +80,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lblFirstName.anchor = GridBagConstraints.WEST;
 		gbc_lblFirstName.gridx = 0;
 		gbc_lblFirstName.gridy = 1;
-		add(lblFirstName, gbc_lblFirstName);
+		formFields.add(lblFirstName, gbc_lblFirstName);
 		
 		fName = new FormField();
 		fName.setHint("First Name");
@@ -75,7 +90,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_fName.insets = new Insets(0, 0, 5, 0);
 		gbc_fName.gridx = 1;
 		gbc_fName.gridy = 1;
-		add(fName, gbc_fName);
+		formFields.add(fName, gbc_fName);
 		fName.setColumns(10);
 		
 		JLabel mNameErr = new JLabel("   ");
@@ -87,7 +102,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_mNameErr.insets = new Insets(0, 0, 5, 0);
 		gbc_mNameErr.gridx = 1;
 		gbc_mNameErr.gridy = 2;
-		add(mNameErr, gbc_mNameErr);
+		formFields.add(mNameErr, gbc_mNameErr);
 		
 		JLabel lblMiddleName = new JLabel("Middle Name:");
 		GridBagConstraints gbc_lblMiddleName = new GridBagConstraints();
@@ -95,7 +110,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lblMiddleName.anchor = GridBagConstraints.WEST;
 		gbc_lblMiddleName.gridx = 0;
 		gbc_lblMiddleName.gridy = 3;
-		add(lblMiddleName, gbc_lblMiddleName);
+		formFields.add(lblMiddleName, gbc_lblMiddleName);
 		
 		mName = new FormField();
 		mName.setHint("Middle Name");
@@ -105,7 +120,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_mName.insets = new Insets(0, 0, 5, 0);
 		gbc_mName.gridx = 1;
 		gbc_mName.gridy = 3;
-		add(mName, gbc_mName);
+		formFields.add(mName, gbc_mName);
 		mName.setColumns(10);
 		
 		JLabel lNameErr = new JLabel("Last Name Required");
@@ -117,7 +132,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lNameErr.insets = new Insets(0, 0, 5, 0);
 		gbc_lNameErr.gridx = 1;
 		gbc_lNameErr.gridy = 4;
-		add(lNameErr, gbc_lNameErr);
+		formFields.add(lNameErr, gbc_lNameErr);
 		
 		JLabel lblLastname = new JLabel("Last Name:");
 		GridBagConstraints gbc_lblLastname = new GridBagConstraints();
@@ -125,7 +140,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lblLastname.anchor = GridBagConstraints.WEST;
 		gbc_lblLastname.gridx = 0;
 		gbc_lblLastname.gridy = 5;
-		add(lblLastname, gbc_lblLastname);
+		formFields.add(lblLastname, gbc_lblLastname);
 		
 		lName = new FormField();
 		lName.setHint("Last Name");
@@ -135,7 +150,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lName.insets = new Insets(0, 0, 5, 0);
 		gbc_lName.gridx = 1;
 		gbc_lName.gridy = 5;
-		add(lName, gbc_lName);
+		formFields.add(lName, gbc_lName);
 		lName.setColumns(10);
 		
 		JLabel ssErr = new JLabel("   ");
@@ -147,7 +162,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_ssErr.insets = new Insets(0, 0, 5, 0);
 		gbc_ssErr.gridx = 1;
 		gbc_ssErr.gridy = 6;
-		add(ssErr, gbc_ssErr);
+		formFields.add(ssErr, gbc_ssErr);
 		
 		JLabel lblSocialSecurity = new JLabel("Social Security#:");
 		GridBagConstraints gbc_lblSocialSecurity = new GridBagConstraints();
@@ -155,7 +170,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lblSocialSecurity.anchor = GridBagConstraints.WEST;
 		gbc_lblSocialSecurity.gridx = 0;
 		gbc_lblSocialSecurity.gridy = 7;
-		add(lblSocialSecurity, gbc_lblSocialSecurity);
+		formFields.add(lblSocialSecurity, gbc_lblSocialSecurity);
 		
 		ssNumber = new FormField();
 		ssNumber.setHint("Social Security#");
@@ -165,7 +180,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_ssNumber.insets = new Insets(0, 0, 5, 0);
 		gbc_ssNumber.gridx = 1;
 		gbc_ssNumber.gridy = 7;
-		add(ssNumber, gbc_ssNumber);
+		formFields.add(ssNumber, gbc_ssNumber);
 		ssNumber.setColumns(10);
 		
 		JLabel workGroupErr = new JLabel("  ");
@@ -178,7 +193,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_workGroupErr.insets = new Insets(0, 0, 5, 0);
 		gbc_workGroupErr.gridx = 1;
 		gbc_workGroupErr.gridy = 8;
-		add(workGroupErr, gbc_workGroupErr);
+		formFields.add(workGroupErr, gbc_workGroupErr);
 		
 		JLabel lblWorkGroup = new JLabel("Work Group:");
 		GridBagConstraints gbc_lblWorkGroup = new GridBagConstraints();
@@ -186,7 +201,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_lblWorkGroup.anchor = GridBagConstraints.WEST;
 		gbc_lblWorkGroup.gridx = 0;
 		gbc_lblWorkGroup.gridy = 9;
-		add(lblWorkGroup, gbc_lblWorkGroup);
+		formFields.add(lblWorkGroup, gbc_lblWorkGroup);
 		
 		wgCombo = new JComboBox<String>();
 		GridBagConstraints gbc_wgCombo = new GridBagConstraints();
@@ -195,7 +210,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_wgCombo.insets = new Insets(0, 0, 5, 0);
 		gbc_wgCombo.gridx = 1;
 		gbc_wgCombo.gridy = 9;
-		add(wgCombo, gbc_wgCombo);
+		formFields.add(wgCombo, gbc_wgCombo);
 		
 		JLabel managerErr = new JLabel("  ");
 		managerErr.setHorizontalAlignment(SwingConstants.LEFT);
@@ -207,14 +222,14 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_managerErr.insets = new Insets(0, 0, 5, 0);
 		gbc_managerErr.gridx = 1;
 		gbc_managerErr.gridy = 10;
-		add(managerErr, gbc_managerErr);
+		formFields.add(managerErr, gbc_managerErr);
 		
 		JLabel lblManger = new JLabel("Manger:");
 		GridBagConstraints gbc_lblManger = new GridBagConstraints();
 		gbc_lblManger.insets = new Insets(0, 0, 5, 5);
 		gbc_lblManger.gridx = 0;
 		gbc_lblManger.gridy = 11;
-		add(lblManger, gbc_lblManger);
+		formFields.add(lblManger, gbc_lblManger);
 		
 		isManager = new JCheckBox(" ");
 		isManager.setHorizontalAlignment(SwingConstants.TRAILING);
@@ -223,7 +238,7 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_isManager.insets = new Insets(0, 0, 5, 5);
 		gbc_isManager.gridx = 1;
 		gbc_isManager.gridy = 11;
-		add(isManager, gbc_isManager);
+		formFields.add(isManager, gbc_isManager);
 		
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
@@ -232,16 +247,19 @@ public class EmployeeInfoMenu extends JPanel {
 		gbc_panel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panel.gridx = 0;
 		gbc_panel.gridy = 12;
-		add(panel, gbc_panel);
+		add(formFields);
+		add(panel);
 		FlowLayout fl_panel = new FlowLayout(FlowLayout.CENTER, 5, 5);
 		fl_panel.setAlignOnBaseline(true);
 		panel.setLayout(fl_panel);
+		panel.setMaximumSize(new Dimension(300, 100));
+		panel.setBackground(Color.RED);
 		
 		
-		JButton cancelEdit = new JButton("Cancel");
-		panel.add(cancelEdit);
+		btnCancel = new JButton("Cancel");
+		panel.add(btnCancel);
 		
-		cancelEdit.addActionListener(new ActionListener() {
+		btnCancel.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -249,8 +267,8 @@ public class EmployeeInfoMenu extends JPanel {
 			}
 		});
 		
-		JButton saveEditBtn = new JButton("Save");
-		panel.add(saveEditBtn);
+		btnSave = new JButton("Save");
+		panel.add(btnSave);
 		
 		btnAdd = new JButton("Add");
 		panel.add(btnAdd);
@@ -263,26 +281,53 @@ public class EmployeeInfoMenu extends JPanel {
 			}
 		});
 		
-		saveEditBtn.addActionListener(new ActionListener() {
+		btnSave.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveClicked();
 			}
 		});
+		
+		btnCancel.setEnabled(false);
+		btnSave.setEnabled(false);
+		fName.setEnabled(false);
+		mName.setEnabled(false);
+		lName.setEnabled(false);
+		ssNumber.setEnabled(false);
+		
+		Component rigidArea = Box.createRigidArea(new Dimension(200, 200));
+		add(rigidArea);
 	}
 	
 	public void newId(int empId) {
 		
-		//setCreateNew (false);
+		setCreateNew(false);
 		
 		ResultList rl = new ResultList(SQL.executeQuery("SELECT employee.* FROM employee WHERE employee_id="+empId));
 		HashMap<String, Object> rr = rl.get(0);
 		
+		
+		fName.setForeground(Color.BLACK);
+		lName.setForeground(Color.BLACK);
+		mName.setForeground(Color.BLACK);
+		ssNumber.setForeground(Color.BLACK);
 		fName.setText((String) rr.get("employee_first_name"));
 		lName.setText((String) rr.get("employee_last_name"));
 		mName.setText((String) rr.get("employee_middle_name"));
 		ssNumber.setText((String) rr.get("employee_ssn"));
+		
+		
+		
+		btnAdd.setEnabled(false);
+		btnCancel.setEnabled(true);
+		btnSave.setEnabled(true);
+		fName.setEnabled(true);
+		mName.setEnabled(true);
+		lName.setEnabled(true);
+		ssNumber.setEnabled(true);
+		
+		setEditMode(true);
 	}
 	
 	public void newEmployee() 
@@ -296,10 +341,27 @@ public class EmployeeInfoMenu extends JPanel {
 		
 		employeeId = -1;
 		
-		//setCreateNew(true);
+		setCreateNew(true);
+		
+		btnAdd.setEnabled(false);
+		btnSave.setEnabled(true);
+		btnCancel.setEnabled(true);
+		fName.setEnabled(true);
+		mName.setEnabled(true);
+		lName.setEnabled(true);
+		ssNumber.setEnabled(true);
+		
 	}
 	
 	public void saveClicked() {
+		
+		btnAdd.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnCancel.setEnabled(false);
+		fName.setEnabled(false);
+		mName.setEnabled(false);
+		lName.setEnabled(false);
+		ssNumber.setEnabled(false);
 		
 		if(createNew)
 		{
@@ -310,6 +372,7 @@ public class EmployeeInfoMenu extends JPanel {
 			updateEmployee();
 		}
 		clearEditMarkers();
+		
 		sibling.employeesUpdated();
 	}
 	
@@ -326,8 +389,17 @@ public class EmployeeInfoMenu extends JPanel {
 		ssNumber.setText("");
 		
 		clearEditMarkers();
+		setEditMode(false);
+		setCreateNew(false);
 		
-		//setCreateNew (true);
+		btnAdd.setEnabled(true);
+		btnSave.setEnabled(false);
+		btnCancel.setEnabled(false);
+		fName.setEnabled(false);
+		mName.setEnabled(false);
+		lName.setEnabled(false);
+		ssNumber.setEnabled(false);
+
 		employeeId = -1;
 		sibling.clearSelected();
 	}
@@ -419,17 +491,29 @@ public class EmployeeInfoMenu extends JPanel {
 
 	public void setEditMode(boolean editMode)
 	{
-		setEnabled(editMode);
+		if(editMode)
+			createNew = false;
+		
+		System.out.println(editMode);
+		formFields.setEnabled(editMode);
+		btnAdd.setEnabled(!editMode);
 		this.editMode = editMode;
+		
+
+		
+		
 	}
 	public boolean getCreateNew()
 	{
 		return createNew;
 	}
 
-	public void setcreateNew(boolean createNew)
+	public void setCreateNew(boolean createNew)
 	{
-		setEnabled(createNew);
+		if(createNew)
+			editMode = false;
+		formFields.setEnabled(createNew);
+		btnAdd.setEnabled(!createNew);
 		this.createNew = createNew;
 	}
 }

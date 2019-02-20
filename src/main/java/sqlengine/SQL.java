@@ -1,5 +1,6 @@
 package sqlengine;
 
+import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.FailedLoginException;
+
+import org.eclipse.jetty.io.ssl.ALPNProcessor.Server;
 
 import sqlengine.ResultList;
 
@@ -61,14 +64,17 @@ public class SQL{
 	{
 		connectionString="jdbc:postgresql://"+host+":"+port+"/"+db;
 		Connection dbConnection;
-		
+		String server = "";
 		try
 		{
+			Socket s = new Socket(host, port);
+			server = "Running";
 			dbConnection = DriverManager.getConnection(connectionString,username,password);
 			dbConnection.close();
-		} catch (SQLException e)
+		} catch (Exception e)
 		{
-			LOGGER.log(Level.SEVERE, "UNABLE TO LOG IN TO DATABASE ", e);
+			LOGGER.info("UNABLE TO LOG IN TO DATABASE ");
+			return server+e.getMessage();
 		}
 		setPassword(password);
 		setUsername(username);

@@ -84,6 +84,8 @@ public class FormField extends JTextField implements FocusListener , DocumentLis
 	public void resetEdit()
 	{
 		edit = false;
+		setText("");
+		focusLost(null);
 	}
 	
 	public boolean hasEdit()
