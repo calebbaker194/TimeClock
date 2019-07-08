@@ -16,16 +16,15 @@ import javax.swing.table.DefaultTableModel;
 import sqlengine.ResultList;
 import sqlengine.SQL;
 import sreeninterface.EmployeeBrowser;
+import sreeninterface.ListInfoMod;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -40,8 +39,7 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 	private static final long serialVersionUID = -313005299187034905L;
 	private ResultList employees;
 	private JTable listTable;
-	private EmployeeInfoMenu employeeMenu;
-	private PunchMenu punchMenu;
+	private ListInfoMod infoPeer;
 	private JCheckBox showActive;
 	private JPanel leftPanel = new JPanel();
 	
@@ -50,11 +48,6 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 	{
 	
 		setLayout(new BorderLayout(0, 0));
-		
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setResizeWeight(0.5);
-		add(splitPane, BorderLayout.CENTER);
-		splitPane.setLeftComponent(leftPanel);
 		GridBagLayout gbl_leftPanel = new GridBagLayout();
 		gbl_leftPanel.columnWidths = new int[]{181, 0, 0};
 		gbl_leftPanel.rowHeights = new int[]{149, 149, 0};
@@ -136,16 +129,18 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 		
 		}
 		
-		//RIGHT SIDE OF SPLIT PANE
-		
-		employeeMenu = new EmployeeInfoMenu((EmployeeBrowser)this);
-		punchMenu = new PunchMenu((EmployeeBrowser)this);
-		
-		
-		splitPane.setRightComponent(employeeMenu);
-		
 		quereyEmployees();
 		addPopupMenu();
+	}
+	
+	public void setInfoPeer(ListInfoMod lim)
+	{
+		infoPeer = lim;
+	}
+	
+	public ListInfoMod getInfoPeer()
+	{
+		return infoPeer;
 	}
 
 	private void addPopupMenu() 
@@ -195,24 +190,28 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 	
 	protected void tableClicked(MouseEvent e) 
 	{
-		if(employeeMenu.hasUnsaved())
+		if(infoPeer instanceof EmployeeInfoMenu)
 		{
-			int ans = JOptionPane.showConfirmDialog(this,
-					"You have unsaved changes. Click yes to save, no to discard, and cancle to review ",
-					 "Unsaved Changes", JOptionPane.YES_NO_CANCEL_OPTION);
-			if(ans == JOptionPane.YES_OPTION)
+			EmployeeInfoMenu infoMod = (EmployeeInfoMenu)infoPeer;
+			if(infoMod.hasUnsaved())
 			{
-				employeeMenu.saveClicked();
-			}
-			if(ans == JOptionPane.NO_OPTION)
-			{
-				
-			}
-			else
-			{
-				return;
-			}
-		}	
+				int ans = JOptionPane.showConfirmDialog(this,
+						"You have unsaved changes. Click yes to save, no to discard, and cancle to review ",
+						 "Unsaved Changes", JOptionPane.YES_NO_CANCEL_OPTION);
+				if(ans == JOptionPane.YES_OPTION)
+				{
+					infoMod.saveClicked();
+				}
+				if(ans == JOptionPane.NO_OPTION)
+				{
+					
+				}
+				else
+				{
+					return;
+				}
+			}	
+		}
 		populatEmployeeInfo();
 	}
 
@@ -224,7 +223,7 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 		if(listTable.getSelectedRow() == -1)
 			return;
 		int fetchID =  (int) employees.get(listTable.getSelectedRow()).get("id");
-		employeeMenu.newId(fetchID);		
+		infoPeer.newId(fetchID);		
 	}
 
 	protected void quereyEmployees()

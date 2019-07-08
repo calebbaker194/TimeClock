@@ -87,6 +87,8 @@ public class PunchMenu extends JPanel implements ListInfoMod{
 
 			}
 		});
+		
+		setVisible(true);
 	}
 
 	@Override

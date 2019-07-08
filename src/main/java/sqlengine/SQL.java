@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.security.auth.login.FailedLoginException;
-
-import org.eclipse.jetty.io.ssl.ALPNProcessor.Server;
-
 import sqlengine.ResultList;
 
 
@@ -71,6 +68,7 @@ public class SQL{
 			server = "Running";
 			dbConnection = DriverManager.getConnection(connectionString,username,password);
 			dbConnection.close();
+			s.close();
 		} catch (Exception e)
 		{
 			LOGGER.info("UNABLE TO LOG IN TO DATABASE ");
@@ -152,6 +150,16 @@ public class SQL{
 					{
 						results = st.executeQuery(query);
 					}	
+					else if(flag==4)
+					{
+						int reply = st.executeUpdate(query,Statement.NO_GENERATED_KEYS);
+						st.close();
+						dbConnection.close();
+						ResultList rl = new ResultList();
+						rl.addRow();
+						rl.get(0).put("value", reply);
+						return rl;
+					}
 					else
 					{
 						st.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);

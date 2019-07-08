@@ -27,4 +27,3 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 /bin/
 /.gradle/4.3/fileHashes/
-*.gradle

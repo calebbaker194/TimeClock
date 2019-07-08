@@ -189,51 +189,12 @@ public class HomeMenu extends JFrame implements BaseWindow{
 		
 		setVisible(true);
 		
-//		if(false) //TODO: need to make a check for init
-//		{
-//			int ret = JOptionPane.showConfirmDialog(this,
-//					"This Database Does not appear to be initalized. Initalize it now or cancle to exit?",
-//					"Initalize Database",
-//					JOptionPane.YES_NO_OPTION);
-//			if(ret==JOptionPane.YES_OPTION)
-//			{
-//				JTextField userNameField = new JTextField(5);
-//			    JTextField passwordField = new JTextField(5);
-//			    JLabel errMessage = new JLabel();
-//			    
-//			    JPanel myPanel = new JPanel();
-//			    myPanel.add(new JLabel("username:"));
-//			    myPanel.add(userNameField);
-//			    myPanel.add(Box.createHorizontalStrut(15)); // a spacer
-//			    myPanel.add(new JLabel("pasosword:"));
-//			    myPanel.add(passwordField);
-//			    
-//
-//			    boolean initLogin = true;
-//			    
-//			    while(initLogin &&(!userNameField.getText().matches(TCRegex.PASSWORD) && !passwordField.getText().matches(TCRegex.PASSWORD)))
-//			    {
-//				    int result = JOptionPane.showConfirmDialog(null, myPanel, 
-//				             "Please enter a username and password", JOptionPane.OK_CANCEL_OPTION);
-//				    if (result == JOptionPane.CANCEL_OPTION) 
-//				    {
-//				        initLogin = false;
-//				    }
-//				    errMessage.setText("Username and password must be 6 characters long");
-//			    }
-//			    if(initLogin)
-//				InitalizeDatabase.InitDatabase(userNameField.getText(),passwordField.getText());
-//			}
-//			else
-//			{
-//				dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-//			}
-//		}
+
 		
-		//queryStatus();
+		queryStatus();
 		loadScreens();
-		editUsers();
-		
+		//editUsers();
+		showPunchMenu();
 	}
 
 	protected void loadScreens()
@@ -244,6 +205,9 @@ public class HomeMenu extends JFrame implements BaseWindow{
 	    
 	    ListEmployeesMenu le = new ListEmployeesMenu();
 	    getContentPane().add(le,"EditEmployee");
+	    
+	    PunchMenu pm = new PunchMenu(le);
+	    getContentPane().add(pm, "PunchMenu");
 	    
 //	    ListSupervisorsMenu ls = new ListSupervisorsMenu();
 //	    getContentPane().add(ls,"EditSupervisor");
@@ -260,6 +224,11 @@ public class HomeMenu extends JFrame implements BaseWindow{
 	protected void editWorkGroup() {
 		CardLayout cl = (CardLayout)(getLayout());
 	    cl.show(this , "EditWorkGroup");
+	}
+	
+	protected void showPunchMenu() {
+		CardLayout cl = (CardLayout)(getLayout());
+	    cl.show(this , "PunchMenu");
 	}
 
 	protected void editSupervisors() {

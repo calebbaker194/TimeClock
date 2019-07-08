@@ -1,9 +1,12 @@
 package launch;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+import database.InitalizeDatabase;
 import screens.HomeMenu;
 import screens.LoginMenu;
 import sqlengine.PostGresServer;
+import sqlengine.ResultList;
 import sqlengine.SQL;
 import java.awt.Graphics;
 import java.awt.event.WindowEvent;
@@ -109,6 +112,7 @@ public class Main extends JFrame implements Runnable{
 		{
 			if(testLogin(prevousServers.get(0)))
 			{
+				
 				new HomeMenu(); // No need to login. SQLEngine.SQLConnection saves everything.
 				dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 				return;
@@ -122,7 +126,20 @@ public class Main extends JFrame implements Runnable{
 	{	
 		try
 		{
-			return (SQL.Connect(pgdb.getDb(), pgdb.getHost(), pgdb.getPort(), pgdb.getUsername(), pgdb.getPassword())).equals("0");
+			boolean isConnected = (SQL.Connect(pgdb.getDb(), pgdb.getHost(), pgdb.getPort(), pgdb.getUsername(), pgdb.getPassword())).equals("0");
+			
+			if(isConnected)
+			{
+				ResultList r= SQL.executeQuery("SELECT * FROM employee LIMIT 5");
+				
+				if(r.hasError())
+				{
+					System.out.println("Setting Up Database");
+					InitalizeDatabase.InitDatabase("caleb", "tori");
+				}
+			}
+				
+			return isConnected;
 		}
 		catch(Exception e)
 		{

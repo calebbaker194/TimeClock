@@ -27,10 +27,9 @@ dependencies {
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     
-    // https://mvnrepository.com/artifact/org.postgresql/postgresql
-	compile group: 'org.postgresql', name: 'postgresql', version: '42.1.1'
-    
-    
+	// https://mvnrepository.com/artifact/org.postgresql/postgresql
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.6'
+       
     // This is for the web server Spark built on jetty
     compile group: "com.sparkjava", name: "spark-core", version: "2.7.2"
     // FOR the html render engine

@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.Normalizer.Form;
 import java.util.HashMap;
 import java.awt.Font;
 import java.awt.Color;
@@ -17,10 +16,8 @@ import sqlengine.ResultList;
 import sqlengine.SQL;
 import sreeninterface.EmployeeBrowser;
 import sreeninterface.ListInfoMod;
-
 import javax.swing.JComboBox;
 import java.awt.FlowLayout;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -58,14 +55,12 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		setSibling(sibling);
 		formFields = new JPanel();
 		formFields.setMaximumSize(new Dimension(300, 500));
-		formFields.setBackground(Color.BLUE);
 		
 		GridBagLayout gbl_infoPanel = new GridBagLayout();
 		formFields.setLayout(gbl_infoPanel);
 		
 		JLabel fNameErr = new JLabel("First Name Required");
 		fNameErr.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		fNameErr.setForeground(Color.RED);
 		GridBagConstraints gbc_fNameErr = new GridBagConstraints();
 		gbc_fNameErr.anchor = GridBagConstraints.WEST;
 		gbc_fNameErr.gridwidth = 2;
@@ -73,6 +68,7 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		gbc_fNameErr.gridx = 1;
 		gbc_fNameErr.gridy = 0;
 		formFields.add(fNameErr, gbc_fNameErr);
+		fNameErr.setForeground(Color.RED);
 		
 		JLabel lblFirstName = new JLabel("First Name:");
 		GridBagConstraints gbc_lblFirstName = new GridBagConstraints();
@@ -95,7 +91,6 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		
 		JLabel mNameErr = new JLabel("   ");
 		mNameErr.setFont(new Font("Dialog", Font.PLAIN, 10));
-		mNameErr.setForeground(Color.RED);
 		GridBagConstraints gbc_mNameErr = new GridBagConstraints();
 		gbc_mNameErr.anchor = GridBagConstraints.WEST;
 		gbc_mNameErr.gridwidth = 2;
@@ -103,6 +98,7 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		gbc_mNameErr.gridx = 1;
 		gbc_mNameErr.gridy = 2;
 		formFields.add(mNameErr, gbc_mNameErr);
+		mNameErr.setForeground(Color.RED);
 		
 		JLabel lblMiddleName = new JLabel("Middle Name:");
 		GridBagConstraints gbc_lblMiddleName = new GridBagConstraints();
@@ -133,6 +129,7 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		gbc_lNameErr.gridx = 1;
 		gbc_lNameErr.gridy = 4;
 		formFields.add(lNameErr, gbc_lNameErr);
+		
 		
 		JLabel lblLastname = new JLabel("Last Name:");
 		GridBagConstraints gbc_lblLastname = new GridBagConstraints();
@@ -253,7 +250,6 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 		fl_panel.setAlignOnBaseline(true);
 		panel.setLayout(fl_panel);
 		panel.setMaximumSize(new Dimension(300, 100));
-		panel.setBackground(Color.RED);
 		
 		
 		btnCancel = new JButton("Cancel");
