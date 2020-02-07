@@ -232,9 +232,9 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 				  "SELECT employee_id AS id, "
 					   + "employee_last_name || ', ' || employee_first_name AS name, "
 					   + "'' AS idk "
-				+ "FROM employee ";
+				+ "FROM employee WHERE true";
 		if(!showActive.isSelected())
-			employeeQuery += "WHERE employee_isactive IS NULL";
+			employeeQuery += "AND  employee_isactive IS NULL";
 		employees = new ResultList(SQL.executeQuery(employeeQuery));
 		DefaultTableModel tm =((DefaultTableModel)listTable.getModel());
 		tm.setRowCount(0);
@@ -264,4 +264,5 @@ public class ListEmployeesMenu extends JPanel implements EmployeeBrowser {
 	{
 		listTable.clearSelection();
 	}
+
 }

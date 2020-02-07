@@ -1,4 +1,4 @@
-package screens;
+epackage screens;
 
 import javax.swing.JFrame;
 import sqlengine.ResultList;
@@ -199,11 +199,13 @@ public class HomeMenu extends JFrame implements BaseWindow{
 
 	protected void loadScreens()
 	{		
-		System.out.println("Loaded Screens");
+		System.out.println("Loading Screens");
+		
 //		ListWorkGroupMenu lw = new ListWorkGroupMenu();
 //		getContentPane().add(lw, "EditWorkGroup");
 	    
 	    ListEmployeesMenu le = new ListEmployeesMenu();
+	    SplitHolder le = new SplitHolder();
 	    getContentPane().add(le,"EditEmployee");
 	    
 	    PunchMenu pm = new PunchMenu(le);

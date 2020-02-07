@@ -48,10 +48,10 @@ public class EmployeeInfoMenu extends JPanel implements ListInfoMod{
 	private JButton btnCancel;
 	private JPanel formFields;
 	
-	public EmployeeInfoMenu(EmployeeBrowser sibling) {
+	public EmployeeInfoMenu() {
+		
 		BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		setLayout(boxLayout);
-		
 		setSibling(sibling);
 		formFields = new JPanel();
 		formFields.setMaximumSize(new Dimension(300, 500));
